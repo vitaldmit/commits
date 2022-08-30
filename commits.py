@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import time
 import atoma
 import requests
@@ -14,17 +16,20 @@ updated = str(feed.updated)
 with open('updated.txt') as f:
     line = str(f.readline())
 
-
 if (line != updated):
     for entry in feed.entries:
         if str(entry.updated) != line:
             link = entry.links[0].href
-            #text = entry.content.value + ' ' + link
+            # text = entry.content.value + ' ' + link
             text = link
             requests.get('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=html&text=%s' % (TOKEN, CHATID, text))
-            time.sleep(2)
+            time.sleep(1)
         else:
             break
 
-with open('updated.txt', 'w') as f:
-    f.write(updated)
+    with open('updated.txt', 'w') as f:
+        f.write(updated)
+
+now = str(datetime.now())
+with open('requested.txt', 'w') as f:
+    f.write(now)
