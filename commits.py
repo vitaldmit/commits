@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import time
 import atoma
 import requests
@@ -12,24 +10,23 @@ response = requests.get(url)
 feed = atoma.parse_atom_bytes(response.content)
 
 updated = str(feed.updated)
+messages = []
 
 with open('updated.txt') as f:
-    line = str(f.readline())
+    last = str(f.readline())
 
-if (line != updated):
+if (last != updated):
     for entry in feed.entries:
-        if str(entry.updated) != line:
+        if str(entry.updated) != last:
             link = entry.links[0].href
-            # text = entry.content.value + ' ' + link
-            text = link
-            requests.get('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=html&text=%s' % (TOKEN, CHATID, text))
-            time.sleep(1)
+            messages.append(link)
         else:
             break
 
+    messages.reverse()
+    for message in messages:
+        requests.get('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&parse_mode=html&text=%s' % (TOKEN, CHATID, message))
+        time.sleep(2)
+
     with open('updated.txt', 'w') as f:
         f.write(updated)
-
-now = str(datetime.now())
-with open('requested.txt', 'w') as f:
-    f.write(now)
