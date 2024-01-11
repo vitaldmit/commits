@@ -4,9 +4,10 @@ import requests
 from datetime import datetime
 from secrets import TOKEN, CHATID
 
-
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+           'Accept':'application/atom+xml'}
 url = 'https://github.com/python/cpython/commits.atom'
-response = requests.get(url)
+response = requests.get(url, headers=headers)
 feed = atoma.parse_atom_bytes(response.content)
 
 updated = str(feed.updated)
